@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class SimpleDrawCanvas : MonoBehaviour
 {
@@ -22,32 +23,41 @@ public class SimpleDrawCanvas : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
 
         tex = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
-        tex.filterMode = FilterMode.Bilinear;
+        tex.filterMode = FilterMode.Bilinear; 
         tex.wrapMode = TextureWrapMode.Clamp;
 
         clearColors = new Color32[textureWidth * textureHeight];
-        for (int i = 0; i < clearColors.Length; i++) clearColors[i] = new Color32(255, 255, 255, 255); // 白底
+        for (int i = 0; i < clearColors.Length; i++)
+            clearColors[i] = new Color32(255, 255, 255, 255);
 
         Clear();
-
         rawImage.texture = tex;
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        var mouse = Mouse.current;
+        if (mouse == null) return;
+
+        if (mouse.leftButton.isPressed)
         {
-            if (TryGetTextureCoord(Input.mousePosition, out int x, out int y))
+            Vector2 pos = mouse.position.ReadValue();
+            if (TryGetTextureCoord(pos, out int x, out int y))
             {
                 DrawCircle(x, y, brushRadius, brushColor);
-                tex.Apply(false); 
+                tex.Apply(false);
             }
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (mouse.rightButton.wasPressedThisFrame)
         {
             Clear();
         }
+    }
+
+    public void SetBrushColor(Color c)
+    {
+        brushColor = c;
     }
 
     public void Clear()
@@ -92,9 +102,7 @@ public class SimpleDrawCanvas : MonoBehaviour
             {
                 int dx = x - cx;
                 if (dx * dx + dy * dy <= r2)
-                {
                     tex.SetPixel(x, y, col);
-                }
             }
         }
     }
