@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class TextureComparator : MonoBehaviour
 {
@@ -16,12 +17,18 @@ public class TextureComparator : MonoBehaviour
     [Header("Canvas Reference")]
     public SimpleDrawCanvas drawCanvas;
 
-    [Header("Stars")]
+    [Header("Score and Stars")]
     public UIStars[] stars;
     public float[] scoreTargets = new float[] { 40f, 60f, 70f };
+    public float[] scoreBarPoints = new float[] { 0.4f, 0.65f, 0.9f };
+    public Image scoreBar;
+    [Range(0.1f, 2f)] public float scoreBarAnimationDuration = 0.5f;
+    public Ease scoreBarEaseType = Ease.OutCubic;
 
     [SerializeField] float similarityPercentage = 0f;
     private bool[] starsFilled; // Track which stars have been filled
+    private bool[] scoreBarSegmentsFilled; // Track which score bar segments have been filled
+    private Tween currentScoreBarTween; // Current score bar animation tween
 
     // Cached resampled textures to avoid resampling every frame
     private Texture2D cachedResampledReference;
@@ -41,6 +48,7 @@ public class TextureComparator : MonoBehaviour
         if (stars != null && stars.Length > 0)
         {
             starsFilled = new bool[stars.Length];
+            scoreBarSegmentsFilled = new bool[stars.Length];
 
             // Ensure scoreTargets array matches stars array length
             if (scoreTargets == null || scoreTargets.Length != stars.Length)
@@ -57,6 +65,21 @@ public class TextureComparator : MonoBehaviour
                 scoreTargets = newTargets;
             }
 
+            // Ensure scoreBarPoints array matches scoreTargets array length
+            if (scoreBarPoints == null || scoreBarPoints.Length != scoreTargets.Length)
+            {
+                Debug.LogWarning("ScoreBarPoints array length doesn't match scoreTargets array. Resizing...");
+                float[] newBarPoints = new float[scoreTargets.Length];
+                for (int i = 0; i < scoreTargets.Length; i++)
+                {
+                    if (scoreBarPoints != null && i < scoreBarPoints.Length)
+                        newBarPoints[i] = scoreBarPoints[i];
+                    else
+                        newBarPoints[i] = (i + 1) / (float)scoreTargets.Length; // Default: evenly distributed
+                }
+                scoreBarPoints = newBarPoints;
+            }
+
             // Initialize all stars as empty
             for (int i = 0; i < stars.Length; i++)
             {
@@ -64,8 +87,15 @@ public class TextureComparator : MonoBehaviour
                 {
                     stars[i].SetStarEmpty();
                     starsFilled[i] = false;
+                    scoreBarSegmentsFilled[i] = false;
                 }
             }
+        }
+
+        // Initialize score bar
+        if (scoreBar != null)
+        {
+            scoreBar.fillAmount = 0f;
         }
     }
 
@@ -322,6 +352,7 @@ public class TextureComparator : MonoBehaviour
     {
         similarityPercentage = GetSimilarityPercentage();
         UpdateStars();
+        UpdateScoreBar();
     }
 
     /// <summary>
@@ -373,9 +404,103 @@ public class TextureComparator : MonoBehaviour
             {
                 stars[i].SetStarEmpty();
                 starsFilled[i] = false;
+                scoreBarSegmentsFilled[i] = false;
             }
+        }
+
+        // Reset score bar
+        if (scoreBar != null)
+        {
+            if (currentScoreBarTween != null && currentScoreBarTween.IsActive())
+            {
+                currentScoreBarTween.Kill();
+            }
+            scoreBar.fillAmount = 0f;
         }
     }
 
+    /// <summary>
+    /// Calculates the score bar fill amount based on similarity percentage using curve interpolation.
+    /// </summary>
+    private float CalculateScoreBarFill(float similarity)
+    {
+        if (scoreTargets == null || scoreTargets.Length == 0 || scoreBarPoints == null || scoreBarPoints.Length == 0)
+            return 0f;
+
+        // If similarity is below the first target, interpolate from 0 to first bar point
+        if (similarity < scoreTargets[0])
+        {
+            float t = Mathf.Clamp01(similarity / scoreTargets[0]);
+            // Use smooth curve interpolation
+            t = Mathf.SmoothStep(0f, 1f, t);
+            return Mathf.Lerp(0f, scoreBarPoints[0], t);
+        }
+
+        // If similarity is above the last target, interpolate from last bar point to 1.0
+        if (similarity >= scoreTargets[scoreTargets.Length - 1])
+        {
+            float lastTarget = scoreTargets[scoreTargets.Length - 1];
+            float lastBarPoint = scoreBarPoints[scoreBarPoints.Length - 1];
+
+            // Interpolate from last target to 100% (or cap at last bar point if preferred)
+            float maxSimilarity = 100f;
+            if (similarity >= maxSimilarity)
+                return 1f;
+
+            float t = Mathf.Clamp01((similarity - lastTarget) / (maxSimilarity - lastTarget));
+            t = Mathf.SmoothStep(0f, 1f, t);
+            return Mathf.Lerp(lastBarPoint, 1f, t);
+        }
+
+        // Find which segment we're in and interpolate between the two points
+        for (int i = 0; i < scoreTargets.Length - 1; i++)
+        {
+            if (similarity >= scoreTargets[i] && similarity < scoreTargets[i + 1])
+            {
+                float segmentStart = scoreTargets[i];
+                float segmentEnd = scoreTargets[i + 1];
+                float barStart = scoreBarPoints[i];
+                float barEnd = scoreBarPoints[i + 1];
+
+                // Normalize similarity to 0-1 within this segment
+                float t = (similarity - segmentStart) / (segmentEnd - segmentStart);
+                // Apply smooth curve interpolation
+                t = Mathf.SmoothStep(0f, 1f, t);
+                return Mathf.Lerp(barStart, barEnd, t);
+            }
+        }
+
+        return 0f;
+    }
+
+    /// <summary>
+    /// Updates the score bar based on the current similarity percentage.
+    /// </summary>
+    private void UpdateScoreBar()
+    {
+        if (scoreBar == null || scoreTargets == null || scoreTargets.Length == 0 || scoreBarPoints == null)
+            return;
+
+        float targetFill = CalculateScoreBarFill(similarityPercentage);
+        float currentFill = scoreBar.fillAmount;
+
+        // Only animate if the fill amount has changed significantly (avoid jitter)
+        if (Mathf.Abs(targetFill - currentFill) > 0.001f)
+        {
+            // Kill existing tween if active
+            if (currentScoreBarTween != null && currentScoreBarTween.IsActive())
+            {
+                currentScoreBarTween.Kill();
+            }
+
+            // Animate to target fill amount
+            currentScoreBarTween = DOTween.To(
+                () => scoreBar.fillAmount,
+                x => scoreBar.fillAmount = x,
+                targetFill,
+                scoreBarAnimationDuration
+            ).SetEase(scoreBarEaseType);
+        }
+    }
 
 }
