@@ -355,6 +355,38 @@ public class TextureComparator : MonoBehaviour
         UpdateScoreBar();
     }
 
+    void OnDisable()
+    {
+        // Clean up any active tweens when the object is disabled
+        if (currentScoreBarTween != null && currentScoreBarTween.IsActive())
+        {
+            currentScoreBarTween.Kill();
+            currentScoreBarTween = null;
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Clean up any active tweens when the object is destroyed
+        if (currentScoreBarTween != null && currentScoreBarTween.IsActive())
+        {
+            currentScoreBarTween.Kill();
+            currentScoreBarTween = null;
+        }
+
+        // Clean up cached textures
+        if (cachedResampledReference != null)
+        {
+            Destroy(cachedResampledReference);
+            cachedResampledReference = null;
+        }
+        if (cachedResampledMask != null)
+        {
+            Destroy(cachedResampledMask);
+            cachedResampledMask = null;
+        }
+    }
+
     /// <summary>
     /// Updates stars based on the current similarity percentage.
     /// </summary>

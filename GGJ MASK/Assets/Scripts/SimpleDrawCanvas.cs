@@ -381,4 +381,14 @@ public class SimpleDrawCanvas : MonoBehaviour
 
         return originalPos + new Vector2(offsetX, offsetY);
     }
+
+    void OnDestroy()
+    {
+        // Clean up texture when object is destroyed
+        if (tex != null)
+        {
+            Destroy(tex);
+            tex = null;
+        }
+    }
 }
