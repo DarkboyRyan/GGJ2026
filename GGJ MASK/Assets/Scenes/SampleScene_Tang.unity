@@ -119,6 +119,38 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &159030552
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 159030553}
+  m_Layer: 0
+  m_Name: MusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &159030553
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 159030552}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 884.92474, y: 467.7883, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 493261319}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &183845557
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,6 +738,123 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487119570}
   m_CullTransparentMesh: 1
+--- !u!1 &493261318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493261319}
+  - component: {fileID: 493261320}
+  m_Layer: 0
+  m_Name: SFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &493261319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493261318}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 159030553}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &493261320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493261318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155758ab81f0d8a478d5893ef952c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SFXManager
+  entries:
+  - key: 
+    clip: {fileID: 8300000, guid: 10af2b311bdc0854388f64ce9db38e72, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 1fa9dd4a2fc3e97468bd1c19fe2a90f7, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: e66ef62347ee2f845a2a4bf76e964251, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 7a4acc8cb9a87e149b59b11376712bdc, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 7ff8e59aff2757a439021a35a1e3e7b6, type: 3}
+    volume: 0
+    pitchMin: 0.5
+    pitchMax: 0.5
+  - key: 
+    clip: {fileID: 8300000, guid: e2aeb250d61d7d04da10aaa9cde09d1e, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 1ae95dbf81d302642b552bc7d1eda85c, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 41366e5828b07f94b98a07d4728df216, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 0c51c7187bce4704cb59288abb22b9c6, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 845fa92a8b4fc1349ba9a46dde2d7e24, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: c0ad5017d31447647a712d02a3b32cb3, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: 92e5366581456ff43a8757543ca608aa, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: bc395849ff9cacc42997730dc22e7d88, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  - key: 
+    clip: {fileID: 8300000, guid: ea9b22b376651f14a964749ede2c748d, type: 3}
+    volume: 0
+    pitchMin: 0
+    pitchMax: 0
+  masterVolume: 1
+  poolSize: 8
 --- !u!114 &494685102 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6163383169655538614, guid: ef4b692bfeeb4a0429900b2b9feee538, type: 3}
@@ -2376,3 +2525,4 @@ SceneRoots:
   - {fileID: 6456381570345254368}
   - {fileID: 2016803992}
   - {fileID: 7223398614162650036}
+  - {fileID: 159030553}
